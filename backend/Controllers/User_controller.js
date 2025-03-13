@@ -1,15 +1,15 @@
 const { dynamoDB, TABLE_NAME } = require("../Config/aws.config");
 const formSchema = require("../Models/User_model");
-const sgMail = require('@sendgrid/mail'); 
+const sgMail = require('@sendgrid/mail');
 
-sgMail.setApiKey(process.env.SEND_GRID_API_KEY); 
+sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
 exports.create_user = async (req, res) => {
     try {
-    
+
         const formData = {
             ben: "uniquePartitionKeyValue",
-            userId: new Date().getTime().toString(), 
+            userId: new Date().getTime().toString(),
             ...req.body,
         };
 
@@ -23,9 +23,11 @@ exports.create_user = async (req, res) => {
 
         const msg = {
             to: process.env.RECEIVER_EMAIL,
-            from: process.env.SENDER_EMAIL, 
+            from: process.env.SENDER_EMAIL,
             subject: 'New User Created',
             text: `A new user has been created with the following details:\n\n
+                First Name: ${formData.firstName}\n
+                Last Name: ${formData.lastName}\n
                 User ID: ${formData.userId}\n
                 Birth Date: ${formData.birthDate}\n
                 Social Security No.: ${formData.socialSecurityNo}\n
@@ -39,7 +41,7 @@ exports.create_user = async (req, res) => {
                 Next of Kin Phone: ${formData.nextOfKinPhone}\n`
         };
 
-        await sgMail.send(msg); 
+        await sgMail.send(msg);
 
         res.status(201).json({ message: "Form data saved successfully and email sent!", data: formData });
     } catch (error) {
