@@ -1,6 +1,8 @@
 const Joi = require("joi");
 
 const formSchema = Joi.object({
+  FirstName: Joi.string().required,
+  LastName: Joi.string().required,
   birthDate: Joi.string().required(),
   socialSecurityNo: Joi.string().length(9).pattern(/^[0-9]+$/).required(),
   referringAgency: Joi.string().allow(""),
