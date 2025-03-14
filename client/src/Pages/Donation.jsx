@@ -36,15 +36,25 @@ const Donate = () => {
 
     try {
       if (donationType === "money") {
-        const response = await fetch("http://localhost:8000/api/payment/create-checkout-session", {
+        const response = await fetch("https://meta-uv20.onrender.com/api/payment/create-checkout-session", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ amount: donationAmount }),
+          body: JSON.stringify({
+            donorName,
+            donorEmail,
+            donorPhone,
+            donorAddress,
+            donationAmount,
+          }),
         });
 
         const { sessionId } = await response.json();
+        if (!sessionId) {
+          toast.error("Failed to create a checkout session.");
+          return;
+        }
 
         const stripe = await stripePromise;
         const { error } = await stripe.redirectToCheckout({
@@ -67,7 +77,7 @@ const Donate = () => {
           },
         };
 
-        const response = await fetch("http://localhost:8000/api/payment/non-monetary-donations", {
+        const response = await fetch("https://meta-uv20.onrender.com/api/payment/non-monetary-donations", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

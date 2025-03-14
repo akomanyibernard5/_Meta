@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-import eventImage1 from '../assets/logo.jpeg';
-import eventImage2 from '../assets/butterfly.jpeg';
-import eventImage3 from '../assets/logo.jpeg';
-import eventImage4 from '../assets/non_existing.png';
+import eventImage1 from '../assets/founder.jpeg';
+import eventImage2 from '../assets/founder.jpeg';
+import eventImage3 from '../assets/founder.jpeg';
+import eventImage4 from '../assets/founder.jpeg';
 
 const eventImages = [
   [eventImage1, eventImage2, eventImage3, eventImage4],
@@ -18,7 +18,7 @@ const EventsComponent = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [hoveredImageIndexes, setHoveredImageIndexes] = useState(
-    new Array(8).fill(0) // Initialize with 0 (showing the first image for all events)
+    new Array(8).fill(0)
   );
   const [hoverTimers, setHoverTimers] = useState([]);
 

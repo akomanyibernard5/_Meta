@@ -2,11 +2,16 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar";
-import Events from "./Events";
 import Footer from "../Components/Footer";
-import background_video from "../assets/meta_back_ground.webm";
+import butterfly_1 from "../assets/butterfly_1.jpg";
+import butterfly_2 from "../assets/butterfly_2.jpg";
+import butterfly_3 from "../assets/butterfly_3.jpg";
+import butterfly_4 from "../assets/butterfly_4.jpg";
+import butterfly_5 from "../assets/butterfly_5.jpg";
 import Founder_image from "../assets/founder.jpeg";
-import Non_Existing_Image from "../assets/non_existing.png";
+import women_4 from "../assets/women_4.jpg";
+import kim from "../assets/kim.jpg";
+import Anita from "../assets/Anita.jpg";
 
 const Home = () => {
   const pillars = [
@@ -19,7 +24,7 @@ const Home = () => {
       description: "With the help of our professional team, each individual will set personal, obtainable goals.",
     },
     {
-      title: "RECOGNIZING UNMET NEEDS",
+      title: "RECOGNIZING NEEDS",
       description: "We recognize that the community in need of assistance spans across Middle Tennessee.",
     },
     {
@@ -37,36 +42,54 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen font-poppins bg-white">
+    <div className="min-h-screen font-poppins bg-white" id="home">
       <Navbar />
+      <div className="relative">
+        <img
+          src={women_4}
+          alt="Metamorphosis Supportive Women"
+          className="w-full h-full object-contain object-center"
+        />
+        <h1 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center text-1xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold whitespace-nowrap max-w-full overflow-hidden text-ellipsis">
+          METAMORPHOSIS SUPPORTIVE HOUSING
+        </h1>
+      </div>
 
-      <section className="relative h-[90vh] overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          className="absolute w-full h-full object-cover"
-          style={{ filter: "brightness(0.4)" }}
-        >
-          <source src={background_video} type="video/mp4" />
-        </video>
+      <div className="absolute inset-0 bg-black opacity-10"></div>
+      <section id="mission" className="py-20 bg-white relative z-10 overflow-hidden">
+        {/* Butterfly Images as Watermarks */}
+        <img
+          src={butterfly_1}
+          alt="Butterfly"
+          className="absolute w-32 h-32 z-0" // Removed opacity
+          style={{ top: '5%', left: '2%', transform: 'rotate(-15deg)' }}
+        />
+        <img
+          src={butterfly_2}
+          alt="Butterfly"
+          className="absolute w-40 h-40 z-0" // Removed opacity
+          style={{ top: '15%', right: '5%', transform: 'rotate(20deg)' }}
+        />
+        <img
+          src={butterfly_3}
+          alt="Butterfly"
+          className="absolute w-24 h-24 z-0" // Removed opacity
+          style={{ bottom: '20%', left: '10%', transform: 'rotate(10deg)' }}
+        />
+        <img
+          src={butterfly_4}
+          alt="Butterfly"
+          className="absolute w-48 h-48 z-0" // Removed opacity
+          style={{ bottom: '5%', right: '10%', transform: 'rotate(-25deg)' }}
+        />
+        <img
+          src={butterfly_5}
+          alt="Butterfly"
+          className="absolute w-36 h-36 z-0" // Removed opacity
+          style={{ top: '35%', left: '25%', transform: 'rotate(15deg)' }}
+        />
 
-        <div className="relative z-10 h-full flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="text-center text-white px-4 mt-8"
-          >
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white">
-              SUPPORTIVE HOUSING FOR WOMEN
-            </h1>
-          </motion.div>
-        </div>
-      </section>
-
-      <section id="mission" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -84,7 +107,7 @@ const Home = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="bg-gray-100 p-8 rounded-xl shadow-md border-t-4 border-gray-900 "
+              className="bg-gray-100 p-8 rounded-xl shadow-md border-t-4 border-gray-900"
             >
               <ul className="space-y-4 text-gray-900">
                 <li className="flex items-start">
@@ -151,8 +174,40 @@ const Home = () => {
         </div>
       </section>
 
-      <section id="pillars" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+      <section id="pillars" className="py-20 bg-white relative z-10 overflow-hidden">
+        {/* Butterfly Images as Watermarks */}
+        <img
+          src={butterfly_1}
+          alt="Butterfly"
+          className="absolute w-32 h-32 z-0" // Removed opacity
+          style={{ top: '10%', left: '15%', transform: 'rotate(-10deg)' }}
+        />
+        <img
+          src={butterfly_2}
+          alt="Butterfly"
+          className="absolute w-40 h-40 z-0" // Removed opacity
+          style={{ top: '25%', right: '20%', transform: 'rotate(15deg)' }}
+        />
+        <img
+          src={butterfly_3}
+          alt="Butterfly"
+          className="absolute w-24 h-24 z-0" // Removed opacity
+          style={{ bottom: '30%', left: '5%', transform: 'rotate(5deg)' }}
+        />
+        <img
+          src={butterfly_4}
+          alt="Butterfly"
+          className="absolute w-48 h-48 z-0" // Removed opacity
+          style={{ bottom: '10%', right: '5%', transform: 'rotate(-20deg)' }}
+        />
+        <img
+          src={butterfly_5}
+          alt="Butterfly"
+          className="absolute w-36 h-36 z-0" // Removed opacity
+          style={{ top: '40%', left: '30%', transform: 'rotate(10deg)' }}
+        />
+
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -172,7 +227,7 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                className="bg-gray-100 p-8 border-t-4 border-gray-900  rounded-xl shadow-md cursor-pointer hover:shadow-2xl transform hover:scale-110 transition-all duration-300 ease-in-out"
+                className="bg-gray-100 p-8 border-t-4 border-gray-900 rounded-xl shadow-md cursor-pointer hover:shadow-2xl transform hover:scale-110 transition-all duration-300 ease-in-out"
               >
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">{pillar.title}</h3>
                 <p className="text-gray-900">{pillar.description}</p>
@@ -182,8 +237,40 @@ const Home = () => {
         </div>
       </section>
 
-      <section id="leaders" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+      <section id="leaders" className="py-20 bg-white relative z-10 overflow-hidden">
+        {/* Butterfly Images as Watermarks */}
+        <img
+          src={butterfly_1}
+          alt="Butterfly"
+          className="absolute w-32 h-32 z-0" // Removed opacity
+          style={{ top: '5%', left: '5%', transform: 'rotate(-15deg)' }}
+        />
+        <img
+          src={butterfly_2}
+          alt="Butterfly"
+          className="absolute w-40 h-40 z-0" 
+          style={{ top: '20%', right: '10%', transform: 'rotate(20deg)' }}
+        />
+        <img
+          src={butterfly_3}
+          alt="Butterfly"
+          className="absolute w-24 h-24 z-0" 
+          style={{ bottom: '25%', left: '15%', transform: 'rotate(10deg)' }}
+        />
+        <img
+          src={butterfly_4}
+          alt="Butterfly"
+          className="absolute w-48 h-48 z-0" 
+          style={{ bottom: '5%', right: '5%', transform: 'rotate(-25deg)' }}
+        />
+        <img
+          src={butterfly_5}
+          alt="Butterfly"
+          className="absolute w-36 h-36 z-0" 
+          style={{ top: '35%', left: '30%', transform: 'rotate(15deg)' }}
+        />
+
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -196,7 +283,6 @@ const Home = () => {
           </motion.div>
 
           <div className="flex flex-wrap justify-center gap-8">
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -208,7 +294,7 @@ const Home = () => {
                 alt="Founder"
                 className="w-40 h-40 rounded-full border-4 border-gray-900 mb-4"
               />
-              <h3 className="text-2xl font-bold text-gray-900">Lynnita Carter </h3>
+              <h3 className="text-2xl font-bold text-gray-900">Lynnita Carter</h3>
               <p className="text-gray-900 mt-2">Founder and CEO</p>
             </motion.div>
 
@@ -219,12 +305,11 @@ const Home = () => {
               className="flex flex-col items-center text-center"
             >
               <img
-                src={Non_Existing_Image}
+                src={kim}
                 alt="Co-founder"
                 className="w-40 h-40 rounded-full border-4 border-gray-900 mb-4"
               />
-              <h3 className="text-2xl font-bold text-gray-900">Anita Wiggs</h3>
-              <p className="text-gray-900 mt-2">Co-Founder</p>
+              <h3 className="text-2xl font-bold text-gray-900">Kim Stevens</h3>
             </motion.div>
 
             <motion.div
@@ -234,19 +319,17 @@ const Home = () => {
               className="flex flex-col items-center text-center"
             >
               <img
-                src={Non_Existing_Image}
+                src={Anita}
                 alt="Co-founder"
                 className="w-40 h-40 rounded-full border-4 border-gray-900 mb-4"
               />
-              <h3 className="text-2xl font-bold text-gray-900">Kim Stevens</h3>
-              <p className="text-gray-900 mt-2">Director</p>
+              <h3 className="text-2xl font-bold text-gray-900">Anita Wiggs</h3>
+              <p className="text-gray-900 mt-2">Co-Founder</p>
             </motion.div>
           </div>
         </div>
       </section>
 
-
-      {/* <Events /> */}
       <Footer />
     </div>
   );

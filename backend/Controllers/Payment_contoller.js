@@ -11,7 +11,7 @@ const sendEmail = async (from, to, subject, text) => {
   try {
     await sendGridMail.send({
       to,
-      from, 
+      from,
       subject,
       text,
     });
@@ -20,10 +20,18 @@ const sendEmail = async (from, to, subject, text) => {
   }
 };
 
+
 exports.createCheckoutSession = async (req, res) => {
   try {
-    const { amount, currency = "usd", donorEmail, donorName } = req.body;
-    const amountInCents = amount * 100;
+    const { currency = "usd", donorEmail, donorName, donorPhone, donorAddress, donationAmount } = req.body;
+
+    const donationAmountFloat = parseFloat(donationAmount);
+    if (isNaN(donationAmountFloat) || donationAmountFloat <= 0) {
+      return res.status(400).json({ error: "Invalid donation amount" });
+    }
+
+    const amountInCents = donationAmountFloat * 100;
+
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -38,30 +46,68 @@ exports.createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/success`,
-      cancel_url: `${process.env.FRONTEND_URL}/failed`,
+      success_url: `https://metamorphosistennessee.org/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: "https://metamorphosistennessee.org/failed",
       customer_email: donorEmail,
     });
 
     res.status(200).json({ sessionId: session.id });
 
-    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${amount}. Your support is greatly appreciated!\n\nBest Regards,\n[Your Organization]`;
-    await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Thank You for Your Donation!", donorMessage);
-
-    const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${amount}\nDonor Email: ${donorEmail}`;
-    await sendEmail(donorEmail, process.env.RECEIVER_EMAIL, "New Donation Received", orgMessage);
   } catch (error) {
     console.error("Error creating checkout session:", error);
     res.status(500).json({ error: "Failed to create checkout session" });
   }
 };
 
+exports.stripeWebhook = async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (error) {
+    console.error("Webhook signature verification failed.", error);
+    return res.status(400).send(`Webhook error: ${error.message}`);
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+
+    const donorName = session.customer_details.name;
+    const donorEmail = session.customer_details.email;
+    const donationAmount = session.amount_total / 100;
+
+    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${donationAmount}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
+    await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Thank You for Your Donation!", donorMessage);
+
+    const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${donationAmount}\nDonor Email: ${donorEmail}`;
+    await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "New Donation Received", orgMessage);
+  }
+  else if (event.type === "checkout.session.async_payment_failed") {
+    const session = event.data.object;
+
+    const donorName = session.customer_details.name;
+    const donorEmail = session.customer_details.email;
+
+    const retryMessage = `Dear ${donorName},\n\nIt seems that your donation attempt was unsuccessful. Please try again to complete your donation. If you need assistance, don't hesitate to reach out.\n\nBest Regards,\nMetamorphosis Supportive Housing`;
+
+    await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Payment Failed - Please Try Again", retryMessage);
+  }
+  else {
+    console.log("Unhandled event type:", event.type);
+  }
+
+  res.status(200).send("Webhook received");
+};
+
+
+
 exports.handleNonMonetaryDonation = async (req, res) => {
   try {
     const { type, details, donor } = req.body;
     nonMonetaryDonations.push({ type, details, donor });
 
-    const donorMessage = `Dear ${donor.name},\n\nThank you for your generous donation of ${type}. Your support is greatly appreciated!\n\nBest Regards,\n[Your Organization]`;
+    const donorMessage = `Dear ${donor.name},\n\nThank you for your generous donation of ${type}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
     await sendEmail(donor.email, donor.email, "Thank You for Your Donation!", donorMessage);
 
     const orgMessage = `New Non-Monetary Donation Received:\n\nType: ${type}\nDetails: ${details}\nDonor Name: ${donor.name}\nDonor Email: ${donor.email}\nDonor Phone: ${donor.phone}\nDonor Address: ${donor.address}`;
