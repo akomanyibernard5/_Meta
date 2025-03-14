@@ -381,30 +381,3 @@ exports.sendMessage = async (req, res) => {
     }
 };
 
-
-
-// exports.get_user = async (req, res) => {
-//     try {
-//         const { userId } = req.params;
-
-//         const params = {
-//             TableName: TABLE_NAME,
-//             Key: { userId },
-//         };
-
-//         const { Item } = await dynamoDB.get(params).promise();
-//         if (!Item) {
-//             return res.status(404).json({ error: "User not found" });
-//         }
-
-//         // Decrypt SSN before displaying
-//         if (Item.socialSecurityNo) {
-//             Item.socialSecurityNo = decrypt(Item.socialSecurityNo);
-//         }
-
-//         res.status(200).json({ message: "User data retrieved successfully!", data: Item });
-//     } catch (error) {
-//         console.error("Error retrieving user data:", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
