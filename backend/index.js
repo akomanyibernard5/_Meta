@@ -9,6 +9,12 @@ const userRoutes = require("./Routes/User_route")
 
 app.use(cors()); 
 
+const corsOptions = {
+  origin: 'https://metamorphosistennessee.org', 
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+};
+
 app.use(bodyParser.json());
 
 
