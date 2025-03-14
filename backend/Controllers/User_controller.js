@@ -7,10 +7,15 @@ sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 exports.create_user = async (req, res) => {
     try {
         const formData = {
-            ben: "uniquePartitionKeyValue", 
-            userId: new Date().getTime().toString(), 
+            ben: "uniquePartitionKeyValue",
+            userId: new Date().getTime().toString(),
             ...req.body, 
         };
+
+        const { error } = formSchema.validate(formData);
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
 
         const params = {
             TableName: TABLE_NAME,
@@ -18,6 +23,7 @@ exports.create_user = async (req, res) => {
         };
 
         await dynamoDB.put(params).promise();
+
         const htmlContent = `
             <html>
                 <head>
@@ -29,7 +35,7 @@ exports.create_user = async (req, res) => {
                             padding: 20px;
                         }
                         h1 {
-                            color: #4CAF50;
+                            color: #212121;
                         }
                         table {
                             width: 100%;
@@ -44,7 +50,7 @@ exports.create_user = async (req, res) => {
                             text-align: left;
                         }
                         th {
-                            background-color: #4CAF50;
+                            background-color: #212121;
                             color: white;
                         }
                         tr:nth-child(even) {
@@ -62,11 +68,11 @@ exports.create_user = async (req, res) => {
                         </tr>
                         <tr>
                             <td>First Name</td>
-                            <td>${formData.FirstName}</td>
+                            <td>${formData.firstName}</td>
                         </tr>
                         <tr>
                             <td>Last Name</td>
-                            <td>${formData.LastName}</td>
+                            <td>${formData.lastName}</td>
                         </tr>
                         <tr>
                             <td>User ID</td>
@@ -75,6 +81,10 @@ exports.create_user = async (req, res) => {
                         <tr>
                             <td>Birth Date</td>
                             <td>${formData.birthDate}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>${formData.Email}</td>
                         </tr>
                         <tr>
                             <td>Social Security No.</td>
@@ -87,6 +97,14 @@ exports.create_user = async (req, res) => {
                         <tr>
                             <td>Treatment Center</td>
                             <td>${formData.treatmentCenter}</td>
+                        </tr>
+                        <tr>
+                            <td>Driver's License No.</td>
+                            <td>${formData.driversLicenseNo}</td>
+                        </tr>
+                        <tr>
+                            <td>State Issued</td>
+                            <td>${formData.stateIssued}</td>
                         </tr>
                         <tr>
                             <td>Last Residence</td>
@@ -112,15 +130,159 @@ exports.create_user = async (req, res) => {
                             <td>Next of Kin Phone</td>
                             <td>${formData.nextOfKinPhone}</td>
                         </tr>
+                        <tr>
+                            <td>Emergency Contact</td>
+                            <td>${formData.emergencyContact}</td>
+                        </tr>
+                        <tr>
+                            <td>Emergency Contact Address</td>
+                            <td>${formData.emergencyContactAddress}</td>
+                        </tr>
+                        <tr>
+                            <td>Emergency Contact Phone</td>
+                            <td>${formData.emergencyContactPhone}</td>
+                        </tr>
+                        <tr>
+                            <td>Medical Problems</td>
+                            <td>${formData.medicalProblems}</td>
+                        </tr>
+                        <tr>
+                            <td>Medical Medication</td>
+                            <td>${formData.medicalMedication}</td>
+                        </tr>
+                        <tr>
+                            <td>Psychiatric Disorder</td>
+                            <td>${formData.psychiatricDisorder}</td>
+                        </tr>
+                        <tr>
+                            <td>Psychiatric Medication</td>
+                            <td>${formData.psychiatricMedication}</td>
+                        </tr>
+                        <tr>
+                            <td>Alcohol/Drug History</td>
+                            <td>${formData.alcoholDrugHistory}</td>
+                        </tr>
+                        <tr>
+                            <td>Primary Drugs Used</td>
+                            <td>${formData.primaryDrugsUsed}</td>
+                        </tr>
+                        <tr>
+                            <td>Treatment Attendance</td>
+                            <td>${formData.treatmentAttendance}</td>
+                        </tr>
+                        <tr>
+                            <td>Education</td>
+                            <td>${formData.education}</td>
+                        </tr>
+                        <tr>
+                            <td>Military Service</td>
+                            <td>${formData.militaryService}</td>
+                        </tr>
+                        <tr>
+                            <td>Employment History</td>
+                            <td>${formData.employmentHistory}</td>
+                        </tr>
+                        <tr>
+                            <td>Incarceration History</td>
+                            <td>${formData.incarcerationHistory}</td>
+                        </tr>
+                        <tr>
+                            <td>Current/Pending Charges</td>
+                            <td>${formData.currentPendingCharges}</td>
+                        </tr>
+                        <tr>
+                            <td>Past Convictions</td>
+                            <td>${formData.pastConvictions}</td>
+                        </tr>
+                        <tr>
+                            <td>Probation/Parole</td>
+                            <td>${formData.probationParole}</td>
+                        </tr>
+                        <tr>
+                            <td>Probation Officer Name</td>
+                            <td>${formData.probationOfficerName}</td>
+                        </tr>
+                        <tr>
+                            <td>Probation Officer Phone</td>
+                            <td>${formData.probationOfficerPhone}</td>
+                        </tr>
+                        <tr>
+                            <td>Last Company Name</td>
+                            <td>${formData.lastCompanyName}</td>
+                        </tr>
+                        <tr>
+                            <td>Last Company Address</td>
+                            <td>${formData.lastCompanyAddress}</td>
+                        </tr>
+                        <tr>
+                            <td>Employment From</td>
+                            <td>${formData.employmentFrom}</td>
+                        </tr>
+                        <tr>
+                            <td>Employment To</td>
+                            <td>${formData.employmentTo}</td>
+                        </tr>
+                        <tr>
+                            <td>Reason for Leaving</td>
+                            <td>${formData.reasonForLeaving}</td>
+                        </tr>
+                        <tr>
+                            <td>Number of Jobs in Last 5 Years</td>
+                            <td>${formData.numberOfJobsInLastFiveYears}</td>
+                        </tr>
+                        <tr>
+                            <td>Future Employment Plans</td>
+                            <td>${formData.futureEmploymentPlans}</td>
+                        </tr>
+                        <tr>
+                            <td>Job Skills</td>
+                            <td>${formData.jobSkills}</td>
+                        </tr>
+                        <tr>
+                            <td>Number of Schools Attended</td>
+                            <td>${formData.numberOfSchoolsAttended}</td>
+                        </tr>
+                        <tr>
+                            <td>Name of Recent School</td>
+                            <td>${formData.schoolPlace}</td>
+                        </tr>
+                        <tr>
+                            <td>Date of Completion</td>
+                            <td>${formData.schoolYear}</td>
+                        </tr>
+                        <tr>
+                            <td>Highest Grade Completed</td>
+                            <td>${formData.lastGradeCompleted}</td>
+                        </tr>
+                        <tr>
+                            <td>College/Trade School Degree</td>
+                            <td>${formData.collegeTradeSchoolDegree}</td>
+                        </tr>
+                        <tr>
+                            <td>Served in Military</td>
+                            <td>${formData.servedInMilitary}</td>
+                        </tr>
+                        <tr>
+                            <td>Number of Years Served</td>
+                            <td>${formData.militaryYears}</td>
+                        </tr>
+                        <tr>
+                            <td>Military Branch</td>
+                            <td>${formData.militaryBranch}</td>
+                        </tr>
+                        <tr>
+                            <td>Type of Discharge</td>
+                            <td>${formData.typeOfDischarge}</td>
+                        </tr>
                     </table>
                 </body>
             </html>
         `;
-        
+
         const msg = {
-            to: process.env.RECEIVER_EMAIL,
+            to: process.env.RECEIVER_EMAIL, 
             from: process.env.SENDER_EMAIL, 
-            subject: "New Person Filled the Pre-Screen Form",
+            subject: `${formData.firstName} ${formData.lastName} Filled the Pre-Screen Form`,
             html: htmlContent, 
         };
 
@@ -143,6 +305,9 @@ exports.create_user = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error", details: error.message });
     }
 };
+
+
+
 
 
 exports.get_all_users = async (req, res) => {
