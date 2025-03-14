@@ -22,8 +22,18 @@ const sendEmail = async (from, to, subject, text) => {
 
 exports.createCheckoutSession = async (req, res) => {
   try {
-    const { amount, currency = "usd", donorEmail, donorName } = req.body;
-    const amountInCents = amount * 100;
+    const { currency = "usd", donorEmail, donorName, donorPhone, donorAddress, donationAmount } = req.body;
+    
+    // Validate donationAmount
+    const donationAmountFloat = parseFloat(donationAmount);
+    if (isNaN(donationAmountFloat) || donationAmountFloat <= 0) {
+      return res.status(400).json({ error: "Invalid donation amount" });
+    }
+
+    const amountInCents = donationAmountFloat * 100;
+
+    // Log the amount to verify
+    console.log(`Amount: $${donationAmountFloat}, Amount in cents: ${amountInCents}`);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -44,17 +54,19 @@ exports.createCheckoutSession = async (req, res) => {
     });
 
     res.status(200).json({ sessionId: session.id });
+    console.log("session created")
 
-    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${amount}. Your support is greatly appreciated!\n\nBest Regards,\n[Your Organization]`;
-    await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Thank You for Your Donation!", donorMessage);
+    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${donationAmount}. Your support is greatly appreciated!\n\nBest Regards,\n[Your Organization]`;
+    await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "Thank You for Your Donation!", donorMessage);
 
-    const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${amount}\nDonor Email: ${donorEmail}`;
-    await sendEmail(donorEmail, process.env.RECEIVER_EMAIL, "New Donation Received", orgMessage);
+    const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${donationAmount}\nDonor Email: ${donorEmail}\nPhone: ${donorPhone}\nDonor Address: ${donorAddress}`;
+    await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "New Donation Received", orgMessage);
   } catch (error) {
     console.error("Error creating checkout session:", error);
     res.status(500).json({ error: "Failed to create checkout session" });
   }
 };
+
 
 exports.handleNonMonetaryDonation = async (req, res) => {
   try {
