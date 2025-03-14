@@ -11,7 +11,7 @@ const sendEmail = async (from, to, subject, text) => {
   try {
     await sendGridMail.send({
       to,
-      from, 
+      from,
       subject,
       text,
     });
@@ -20,11 +20,11 @@ const sendEmail = async (from, to, subject, text) => {
   }
 };
 
+
 exports.createCheckoutSession = async (req, res) => {
   try {
     const { currency = "usd", donorEmail, donorName, donorPhone, donorAddress, donationAmount } = req.body;
-    
-    // Validate donationAmount
+
     const donationAmountFloat = parseFloat(donationAmount);
     if (isNaN(donationAmountFloat) || donationAmountFloat <= 0) {
       return res.status(400).json({ error: "Invalid donation amount" });
@@ -32,8 +32,6 @@ exports.createCheckoutSession = async (req, res) => {
 
     const amountInCents = donationAmountFloat * 100;
 
-    // Log the amount to verify
-    console.log(`Amount: $${donationAmountFloat}, Amount in cents: ${amountInCents}`);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -48,23 +46,46 @@ exports.createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/success`,
+      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.FRONTEND_URL}/failed`,
       customer_email: donorEmail,
     });
 
     res.status(200).json({ sessionId: session.id });
-    console.log("session created")
+    console.log("Session created");
 
-    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${donationAmount}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
-    await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "Thank You for Your Donation!", donorMessage);
-
-    const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${donationAmount}\nDonor Email: ${donorEmail}\nPhone: ${donorPhone}\nDonor Address: ${donorAddress}`;
-    await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "New Donation Received", orgMessage);
   } catch (error) {
     console.error("Error creating checkout session:", error);
     res.status(500).json({ error: "Failed to create checkout session" });
   }
+};
+
+exports.stripeWebhook = async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (error) {
+    console.error("Webhook signature verification failed.", error);
+    return res.status(400).send(`Webhook error: ${error.message}`);
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+
+    const donorName = session.customer_details.name;
+    const donorEmail = session.customer_details.email;
+    const donationAmount = session.amount_total / 100;
+
+    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${donationAmount}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
+    await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Thank You for Your Donation!", donorMessage);
+
+    const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${donationAmount}\nDonor Email: ${donorEmail}`;
+    await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "New Donation Received", orgMessage);
+  }
+
+  res.status(200).send("Webhook received");
 };
 
 
