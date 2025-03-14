@@ -56,7 +56,7 @@ exports.createCheckoutSession = async (req, res) => {
     res.status(200).json({ sessionId: session.id });
     console.log("session created")
 
-    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${donationAmount}. Your support is greatly appreciated!\n\nBest Regards,\n[Your Organization]`;
+    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${donationAmount}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
     await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "Thank You for Your Donation!", donorMessage);
 
     const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${donationAmount}\nDonor Email: ${donorEmail}\nPhone: ${donorPhone}\nDonor Address: ${donorAddress}`;
@@ -73,7 +73,7 @@ exports.handleNonMonetaryDonation = async (req, res) => {
     const { type, details, donor } = req.body;
     nonMonetaryDonations.push({ type, details, donor });
 
-    const donorMessage = `Dear ${donor.name},\n\nThank you for your generous donation of ${type}. Your support is greatly appreciated!\n\nBest Regards,\n[Your Organization]`;
+    const donorMessage = `Dear ${donor.name},\n\nThank you for your generous donation of ${type}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
     await sendEmail(donor.email, donor.email, "Thank You for Your Donation!", donorMessage);
 
     const orgMessage = `New Non-Monetary Donation Received:\n\nType: ${type}\nDetails: ${details}\nDonor Name: ${donor.name}\nDonor Email: ${donor.email}\nDonor Phone: ${donor.phone}\nDonor Address: ${donor.address}`;
