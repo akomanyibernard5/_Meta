@@ -4,25 +4,14 @@ const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
+
 exports.create_user = async (req, res) => {
     try {
+
         const formData = {
-            ben: "uniquePartitionKeyValue",
-            userId: new Date().getTime().toString(),
-            ...req.body, 
+            ...req.body,
         };
 
-        const { error } = formSchema.validate(formData);
-        if (error) {
-            return res.status(400).json({ error: error.details[0].message });
-        }
-
-        const params = {
-            TableName: TABLE_NAME,
-            Item: formData,
-        };
-
-        await dynamoDB.put(params).promise();
 
         const htmlContent = `
             <html>
@@ -280,10 +269,10 @@ exports.create_user = async (req, res) => {
         `;
 
         const msg = {
-            to: process.env.RECEIVER_EMAIL, 
-            from: process.env.SENDER_EMAIL, 
+            to: process.env.RECEIVER_EMAIL,
+            from: process.env.SENDER_EMAIL,
             subject: `${formData.firstName} ${formData.lastName} Filled the Pre-Screen Form`,
-            html: htmlContent, 
+            html: htmlContent,
         };
 
         await sgMail.send(msg)
@@ -329,19 +318,19 @@ exports.get_all_users = async (req, res) => {
 
 exports.get_users_by_name = async (req, res) => {
     try {
-        const { name } = req.query; 
+        const { name } = req.query;
         if (!name || name.trim() === '') {
             return res.status(400).json({ error: "Name query parameter is required" });
         }
 
         const params = {
             TableName: TABLE_NAME,
-            FilterExpression: 'contains(#name, :name)',  
+            FilterExpression: 'contains(#name, :name)',
             ExpressionAttributeNames: {
-                '#name': 'name', 
+                '#name': 'name',
             },
             ExpressionAttributeValues: {
-                ':name': name, 
+                ':name': name,
             },
         };
 
@@ -357,5 +346,37 @@ exports.get_users_by_name = async (req, res) => {
     } catch (error) {
         console.error("Error fetching users:", error);
         res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+exports.sendMessage = async (req, res) => {
+    const { email, phone, message } = req.body;
+
+    if (!email || !message) {
+        return res.status(400).json({ error: "Email and message are required." });
+    }
+
+    const msg = {
+        to: process.env.RECEIVER_EMAIL,
+        from: process.env.SENDER_EMAIL,
+        subject: "New Message from Metamorphosis Supportive Housing Website",
+        text: `
+        Email: ${email}
+        Phone: ${phone || "Not provided"}
+        Message: ${message}
+      `,
+        html: `
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
+        <p><strong>Message:</strong> ${message}</p>
+      `,
+    };
+
+    try {
+        await sgMail.send(msg);
+        res.status(200).json({ message: "Message sent successfully!" });
+    } catch (error) {
+        console.error("Error sending email:", error);
+        res.status(500).json({ error: "Failed to send message. Please try again." });
     }
 };
