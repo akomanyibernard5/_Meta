@@ -46,13 +46,12 @@ exports.createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/failed`,
+      success_url: `https://metamorphosistennessee.org/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: "https://metamorphosistennessee.org/failed",
       customer_email: donorEmail,
     });
 
     res.status(200).json({ sessionId: session.id });
-    console.log("Session created");
 
   } catch (error) {
     console.error("Error creating checkout session:", error);
@@ -84,9 +83,23 @@ exports.stripeWebhook = async (req, res) => {
     const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${donationAmount}\nDonor Email: ${donorEmail}`;
     await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "New Donation Received", orgMessage);
   }
+  else if (event.type === "checkout.session.async_payment_failed") {
+    const session = event.data.object;
+
+    const donorName = session.customer_details.name;
+    const donorEmail = session.customer_details.email;
+
+    const retryMessage = `Dear ${donorName},\n\nIt seems that your donation attempt was unsuccessful. Please try again to complete your donation. If you need assistance, don't hesitate to reach out.\n\nBest Regards,\nMetamorphosis Supportive Housing`;
+
+    await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Payment Failed - Please Try Again", retryMessage);
+  }
+  else {
+    console.log("Unhandled event type:", event.type);
+  }
 
   res.status(200).send("Webhook received");
 };
+
 
 
 exports.handleNonMonetaryDonation = async (req, res) => {
