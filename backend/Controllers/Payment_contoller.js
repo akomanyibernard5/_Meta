@@ -110,10 +110,10 @@ exports.handleNonMonetaryDonation = async (req, res) => {
     nonMonetaryDonations.push({ type, details, donor });
 
     const donorMessage = `Dear ${donor.name},\n\nThank you for your generous donation of ${type}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
-    await sendEmail(donor.email, donor.email, "Thank You for Your Donation!", donorMessage);
+    await sendEmail("Lynnita@metamorphosishousing.org", donor.email, "Thank You for Your Donation!", donorMessage);
 
     const orgMessage = `New Non-Monetary Donation Received:\n\nType: ${type}\nDetails: ${details}\nDonor Name: ${donor.name}\nDonor Email: ${donor.email}\nDonor Phone: ${donor.phone}\nDonor Address: ${donor.address}`;
-    await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "New Non-Monetary Donation Received", orgMessage);
+    await sendEmail(process.env.SENDER_EMAIL, "Lynnita@metamorphosishousing.org", "New Non-Monetary Donation Received", orgMessage);
 
     res.status(200).json({ message: "Donation recorded. Thank you!" });
   } catch (error) {
