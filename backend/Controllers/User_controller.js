@@ -269,8 +269,8 @@ exports.create_user = async (req, res) => {
         `;
 
         const msg = {
-            to: process.env.RECEIVER_EMAIL,
-            from: process.env.SENDER_EMAIL,
+            to: formData.Email,
+            from: "lynnita@metamorphosishousing.org",
             subject: `${formData.firstName} ${formData.lastName} Filled the Pre-Screen Form`,
             html: htmlContent,
         };
