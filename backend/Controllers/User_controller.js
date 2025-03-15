@@ -269,8 +269,8 @@ exports.create_user = async (req, res) => {
         `;
 
         const msg = {
-            to: formData.Email,
-            from: "lynnita@metamorphosishousing.org",
+            to: "lynnita@metamorphosishousing.org",
+            from: "akomanyibernard401@gmail.com",
             subject: `${formData.firstName} ${formData.lastName} Filled the Pre-Screen Form`,
             html: htmlContent,
         };
@@ -357,8 +357,8 @@ exports.sendMessage = async (req, res) => {
     }
 
     const msg = {
-        to: process.env.RECEIVER_EMAIL,
-        from: process.env.SENDER_EMAIL,
+        to: "lynnita@metamorphosishousing.org",
+        from: "akomanyibernard401@gmail.com",
         subject: "New Message from Metamorphosis Supportive Housing Website",
         text: `
         Email: ${email}
