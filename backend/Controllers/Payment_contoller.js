@@ -46,8 +46,8 @@ exports.createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/`,
-      cancel_url: `${process.env.FRONTEND_URL}/`,
+      success_url: "https://metamorphosistennessee.org/,
+      cancel_url: "https://metamorphosistennessee.org/,
       customer_email: donorEmail,
     });
 
