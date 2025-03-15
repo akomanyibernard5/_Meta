@@ -46,8 +46,8 @@ exports.createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `https://metamorphosistennessee.org/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: "https://metamorphosistennessee.org/failed",
+      success_url: `${process.env.FRONTEND_URL}/`,
+      cancel_url: `${process.env.FRONTEND_URL}/`,
       customer_email: donorEmail,
     });
 
@@ -73,32 +73,34 @@ exports.stripeWebhook = async (req, res) => {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
 
-    const donorName = session.customer_details.name;
-    const donorEmail = session.customer_details.email;
+    const donorName = session.customer_details?.name || "Donor";
+    const donorEmail = session.customer_details?.email;
     const donationAmount = session.amount_total / 100;
 
-    const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${donationAmount}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
-    await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Thank You for Your Donation!", donorMessage);
+    if (donorEmail) {
+      const donorMessage = `Dear ${donorName},\n\nThank you for your generous donation of $${donationAmount}. Your support is greatly appreciated!\n\nBest Regards,\nMetamorphosis Supportive Housing`;
+      await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Thank You for Your Donation!", donorMessage);
+    }
 
     const orgMessage = `New Donation Received:\n\nDonor Name: ${donorName}\nAmount: $${donationAmount}\nDonor Email: ${donorEmail}`;
     await sendEmail(process.env.SENDER_EMAIL, process.env.RECEIVER_EMAIL, "New Donation Received", orgMessage);
   }
-  else if (event.type === "checkout.session.async_payment_failed") {
+  // Handle failed payments
+  else if (event.type === "payment_intent.payment_failed" || event.type === "checkout.session.expired") {
     const session = event.data.object;
+    
+    const donorName = session.customer_details?.name || "Donor";
+    const donorEmail = session.customer_details?.email;
 
-    const donorName = session.customer_details.name;
-    const donorEmail = session.customer_details.email;
-
-    const retryMessage = `Dear ${donorName},\n\nIt seems that your donation attempt was unsuccessful. Please try again to complete your donation. If you need assistance, don't hesitate to reach out.\n\nBest Regards,\nMetamorphosis Supportive Housing`;
-
-    await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Payment Failed - Please Try Again", retryMessage);
-  }
-  else {
-    console.log("Unhandled event type:", event.type);
+    if (donorEmail) {
+      const retryMessage = `Dear ${donorName},\n\nIt seems that your donation attempt was unsuccessful. Please try again to complete your donation. If you need assistance, don't hesitate to reach out.\n\nBest Regards,\nMetamorphosis Supportive Housing`;
+      await sendEmail(process.env.SENDER_EMAIL, donorEmail, "Payment Failed - Please Try Again", retryMessage);
+    }
   }
 
   res.status(200).send("Webhook received");
 };
+
 
 
 
