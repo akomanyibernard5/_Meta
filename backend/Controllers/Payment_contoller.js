@@ -46,8 +46,8 @@ exports.createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: "https://metamorphosistennessee.org/,
-      cancel_url: "https://metamorphosistennessee.org/,
+      success_url: "https://metamorphosistennessee.org/",
+      cancel_url: "https://metamorphosistennessee.org/",
       customer_email: donorEmail,
     });
 
