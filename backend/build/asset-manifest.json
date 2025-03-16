@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.54ee3e5b.css",
+    "main.js": "/static/js/main.85d177e9.js",
+    "static/media/women_4.jpg": "/static/media/women_4.faff09393214809b1275.jpg",
+    "static/media/women_1.jpg": "/static/media/women_1.ef3c4c88e6ad2073525b.jpg",
+    "static/media/butterfly_1.jpg": "/static/media/butterfly_1.f1ff6c95dfb743b3fca9.jpg",
+    "static/media/butterfly_3.jpg": "/static/media/butterfly_3.3db438217521533dc336.jpg",
+    "static/media/butterfly_5.jpg": "/static/media/butterfly_5.2136fb3980bd7e2bdf82.jpg",
+    "static/media/butterfly_4.jpg": "/static/media/butterfly_4.5cdbc0577169f7545fb2.jpg",
+    "static/media/butterfly_2.jpg": "/static/media/butterfly_2.000670deed487ca64894.jpg",
+    "static/media/kim.jpg": "/static/media/kim.0efd2278ef2c255790ea.jpg",
+    "static/media/Anita.jpg": "/static/media/Anita.962ef8ead259fc07a4f2.jpg",
+    "static/media/logo.jpeg": "/static/media/logo.64ecb919c59e745627ff.jpeg",
+    "index.html": "/index.html",
+    "main.54ee3e5b.css.map": "/static/css/main.54ee3e5b.css.map",
+    "main.85d177e9.js.map": "/static/js/main.85d177e9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.54ee3e5b.css",
+    "static/js/main.85d177e9.js"
+  ]
+}
